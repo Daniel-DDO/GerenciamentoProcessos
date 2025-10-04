@@ -1,6 +1,11 @@
 package br.com.so.model;
 
-public enum EnumTipo {
+public enum Tipo {
+    CPU_BOUND,
+    IO_BOUND
+}
+
+    /*
     iobound("I/O bound"),
     cpubound("CPU bound");
 
@@ -14,4 +19,5 @@ public enum EnumTipo {
     public String toString() {
         return nome;
     }
-}
+*/
+

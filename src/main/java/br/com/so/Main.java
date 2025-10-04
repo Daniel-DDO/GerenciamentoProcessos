@@ -1,5 +1,44 @@
 package br.com.so;
 
+import br.com.so.model.*;
+import br.com.so.services.*;
+import br.com.so.*;
+import br.com.so.concurrency.ConcurrencyDemo;
+
+import java.util.Scanner;
+
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("=== Simulador de SO - Round Robin e Multiplas Filas ===");
+        while (true) {
+            System.out.println();
+            System.out.println("Escolha uma opção:");
+            System.out.println("1 - Executar exemplo: 5 threads disputando 2 recursos (mostra corrida e exclusão mútua)");
+            System.out.println("2 - Iniciar simulador de escalonamento (linha de comando)");
+            System.out.println("0 - Sair");
+            System.out.print("> ");
+            int opt = Integer.parseInt(sc.nextLine());
+            if (opt == 0) break;
+            if (opt == 1) {
+                System.out.println("Executando demonstração de recursos compartilhados...");
+                RecursosCompartilhados.demonstrar();
+            } else if (opt == 2) {
+                SistemaCLI cli = new SistemaCLI(sc);
+                cli.run();
+            }
+        }
+        System.out.println("Fim.");
+        sc.close();
+    }
+}
+
+
+
+
+
+/*
 import br.com.so.model.EnumStatus;
 import br.com.so.model.EnumTipo;
 import br.com.so.services.ProcessoService;
@@ -66,7 +105,7 @@ public class Main {
 
      }
 }
-*/
+
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -242,5 +281,5 @@ public class Main {
             e.printStackTrace();
         }
     }
-}
+}*/
 

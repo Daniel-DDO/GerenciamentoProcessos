@@ -1,8 +1,27 @@
 package br.com.so.model;
 
-public class ProcessoMultiplasFilas extends ProcessoGenerico {
+import lombok.Getter;
+import lombok.Setter;
 
-    public ProcessoMultiplasFilas(Integer pid, String nome, Integer prioridade, Integer tempoCpu, EnumStatus status, EnumTipo tipo) {
-        super (pid, nome, prioridade, tempoCpu, status, tipo);
+@Getter
+@Setter
+public class ProcessoMultiplasFilas extends ProcessoGenerico {
+    private int filaAtual = 0;
+
+    public ProcessoMultiplasFilas(int id, String nome, int prioridade, Tipo tipo, int tempoTotalCPU, int chegada) {
+        super(id, nome, prioridade, tipo, tempoTotalCPU, chegada);
+    }
+
+    public ProcessoMultiplasFilas() {
+        super();
+    }
+
+    public int getTurnaround() {
+        if (tempoFinalizacao == -1) return -1;
+        return tempoFinalizacao - tempoChegada;
+    }
+
+    public int getTempoEsperaAcumulado() {
+        return tempoEspera;
     }
 }
