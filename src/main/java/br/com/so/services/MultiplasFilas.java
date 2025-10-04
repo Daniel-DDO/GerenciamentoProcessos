@@ -3,7 +3,7 @@ package br.com.so.services;
 import br.com.so.model.ProcessoGenerico;
 import br.com.so.model.ProcessoMultiplasFilas;
 import br.com.so.model.Status;
-import br.com.so.services.ProcessoService;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ public class MultiplasFilas implements Escalonador {
     private final int[] quantums = new int[]{2, 4, 8};
     private final List<ProcessoMultiplasFilas> finalizados = new ArrayList<>();
     private int tickAtual = 0;
+    @Setter
     private int quantum;
 
     public MultiplasFilas(ProcessoService service, int quantum) {
@@ -24,16 +25,37 @@ public class MultiplasFilas implements Escalonador {
         for (int i = 0; i < 3; i++) filas.add(new LinkedList<>());
     }
 
-    public void setQuantum(int quantum) {
-        this.quantum = quantum;
-    }
-
     @Override
     public void adicionar(ProcessoGenerico p) {
+        ProcessoMultiplasFilas pm;
+        if (p instanceof ProcessoMultiplasFilas) {
+            pm = (ProcessoMultiplasFilas) p;
+        } else {
+            pm = new ProcessoMultiplasFilas(p.getId(), p.getNome(), p.getPrioridade(), p.getTipo(),
+                    p.getTempoTotalCPU(), p.getTempoChegada());
+            pm.setTempoRestante(p.getTempoRestante());
+            pm.setTempoInicio(p.getTempoInicio());
+            pm.setTempoFinalizacao(p.getTempoFinalizacao());
+            pm.setStatus(p.getStatus());
+        }
+        pm.setFilaAtual(0);
+        pm.setStatus(Status.PRONTO);
+        filas.get(0).add(pm);
+        System.out.println("[MF] Adicionado processo: ID=" + pm.getId() + " Nome=" + pm.getNome() + " -> fila=0");
+    }
 
+    private void drainServiceQueue() {
+        java.util.Queue<ProcessoGenerico> q = service.getReadyQueue();
+        while (!q.isEmpty()) {
+            ProcessoGenerico p = q.poll();
+            if (p != null) adicionar(p);
+        }
     }
 
     public void runSimulation() {
+        //carrega processos criados
+        drainServiceQueue();
+
         System.out.println(">>> Iniciando escalonamento Múltiplas Filas (3 níveis)");
         while (filas.stream().anyMatch(q -> !q.isEmpty())) {
             ProcessoMultiplasFilas p = null;
@@ -88,4 +110,18 @@ public class MultiplasFilas implements Escalonador {
         double mediaEspera = finalizados.isEmpty() ? 0 : (double) somaEspera / finalizados.size();
         System.out.println("Tempo médio de espera: " + mediaEspera);
     }
+
+    @Override
+    public List<ProcessoGenerico> getProcessos() {
+        //reúne proc. de todas as filas na ordem das filas, depois os finalizados
+        List<ProcessoGenerico> all = new ArrayList<>();
+        for (Queue<ProcessoMultiplasFilas> q : filas) {
+            if (q != null && !q.isEmpty()) {
+                all.addAll(q);
+            }
+        }
+        all.addAll(finalizados);
+        return all;
+    }
+
 }

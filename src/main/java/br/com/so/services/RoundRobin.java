@@ -1,9 +1,9 @@
 package br.com.so.services;
 
-
 import br.com.so.model.ProcessoGenerico;
 import br.com.so.model.ProcessoRoundRobin;
 import br.com.so.model.Status;
+
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -26,10 +26,37 @@ public class RoundRobin implements Escalonador {
 
     @Override
     public void adicionar(ProcessoGenerico p) {
+        ProcessoRoundRobin pr;
+        if (p instanceof ProcessoRoundRobin) {
+            pr = (ProcessoRoundRobin) p;
+        } else {
+            //converte para ProcessoRoundRobin preservando campos importantes
+            pr = new ProcessoRoundRobin(p.getId(), p.getNome(), p.getPrioridade(), p.getTipo(),
+                    p.getTempoTotalCPU(), p.getTempoChegada());
+            pr.setTempoRestante(p.getTempoRestante());
+            pr.setTempoInicio(p.getTempoInicio());
+            pr.setTempoFinalizacao(p.getTempoFinalizacao());
+            pr.setStatus(p.getStatus());
+        }
+        pr.setStatus(Status.PRONTO);
+        filaProntos.add(pr);
+        System.out.println("[RR] Adicionado processo à fila: ID=" + pr.getId() + " Nome=" + pr.getNome()
+                + " TempoRestante=" + pr.getTempoRestante());
+    }
 
+    //antes de iniciar, carregar processos do ProcessoService
+    private void drainServiceQueue() {
+        Queue<ProcessoGenerico> q = service.getReadyQueue();
+        while (!q.isEmpty()) {
+            ProcessoGenerico p = q.poll();
+            if (p != null) adicionar(p);
+        }
     }
 
     public void runSimulation() {
+        //traz processos criados via ProcessoService.addProcesso(...)
+        drainServiceQueue();
+
         System.out.println(">>> Iniciando escalonamento Round Robin (quantum=" + quantum + ")");
         while (!filaProntos.isEmpty()) {
             ProcessoRoundRobin p = filaProntos.poll();
@@ -74,4 +101,15 @@ public class RoundRobin implements Escalonador {
         double mediaEspera = finalizados.isEmpty() ? 0 : (double) somaEspera / finalizados.size();
         System.out.println("Tempo médio de espera: " + mediaEspera);
     }
+
+    @Override
+    public List<ProcessoGenerico> getProcessos() {
+        //retorna uma cópia com os processos na fila de prontos (em ordem) + os finalizados
+        List<ProcessoGenerico> all = new ArrayList<>();
+        //filaProntos é Queue<ProcessoRoundRobin> -> elementos são Processos (subclasse)
+        all.addAll(filaProntos);
+        all.addAll(finalizados);
+        return all;
+    }
+
 }
