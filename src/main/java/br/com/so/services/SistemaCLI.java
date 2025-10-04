@@ -68,8 +68,20 @@ public class SistemaCLI {
         }
 
         try {
-            System.out.print("ID (int): ");
-            int id = Integer.parseInt(sc.nextLine());
+            boolean idValido;
+            int id;
+            do {
+                System.out.print("ID (int): ");
+                id = Integer.parseInt(sc.nextLine());
+                idValido = true;
+                for (ProcessoGenerico p : escalonador.getProcessos()) {
+                    if (p.getId() == id) {
+                        System.out.println("ID já existe! Digite outro.");
+                        idValido = false;
+                        break;
+                    }
+                }
+            } while (!idValido);
 
             System.out.print("Nome: ");
             String nome = sc.nextLine().trim();
@@ -93,12 +105,14 @@ public class SistemaCLI {
 
             escalonador.adicionar(p);
             System.out.println("Processo criado e adicionado à fila de prontos!");
+
         } catch (NumberFormatException e) {
             System.out.println("Erro: valor numérico inválido. Processo não criado.");
         } catch (Exception e) {
             System.out.println("Erro inesperado ao criar processo: " + e.getMessage());
         }
     }
+
 
     private void listarProcessos() {
         if (escalonador == null) {

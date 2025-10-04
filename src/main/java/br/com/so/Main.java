@@ -4,12 +4,11 @@ import java.util.Scanner;
 import br.com.so.services.SistemaCLI;
 import br.com.so.services.RecursosCompartilhados;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        System.err.println("Álvaro Ribeiro e Daniel Dionísio\n");
         try (Scanner sc = new Scanner(System.in)) {
-            System.err.println("Álvaro Ribeiro e Daniel Dionísio\n");
             System.out.println("=== Simulador de SO - Round Robin e Múltiplas Filas ===");
 
             while (true) {
@@ -51,4 +50,3 @@ public class Main {
         }
     }
 }
-
