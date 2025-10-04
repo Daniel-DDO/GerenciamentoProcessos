@@ -69,8 +69,8 @@ public class RoundRobin implements Escalonador {
             p.setStatus(Status.EXECUTANDO);
             if (p.getTempoInicio() == -1) p.setTempoInicio(tickAtual);
             int tempoExecutar = Math.min(quantum, p.getTempoRestante());
-            System.out.println("[RR|tick=" + tickAtual + "] Executando " + p.getNome() +
-                    " por " + tempoExecutar + " ticks (restante=" + p.getTempoRestante() + ")");
+            System.out.println("[RR|quantum =" + tickAtual + "] Executando " + p.getNome() +
+                    " por " + tempoExecutar + " quantums (restante=" + p.getTempoRestante() + ")");
             for (int i = 0; i < tempoExecutar; i++) {
                 p.executarTick();
                 tickAtual++;
@@ -82,11 +82,11 @@ public class RoundRobin implements Escalonador {
                 p.setStatus(Status.FINALIZADO);
                 p.setTempoFinalizacao(tickAtual);
                 finalizados.add(p);
-                System.out.println("[RR] Processo " + p.getNome() + " finalizou no tick " + tickAtual);
+                System.out.println("[RR] Processo " + p.getNome() + " finalizou no quantum " + tickAtual);
             } else {
                 p.setStatus(Status.PRONTO);
                 filaProntos.add(p);
-                System.out.println("[RR] Processo " + p.getNome() + " foi preemptado no tick " +
+                System.out.println("[RR] Processo " + p.getNome() + " foi preemptado no quantum " +
                         tickAtual + " (restante=" + p.getTempoRestante() + ")");
             }
         }

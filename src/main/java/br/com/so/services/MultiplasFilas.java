@@ -15,7 +15,7 @@ public class MultiplasFilas implements Escalonador {
     private final List<Queue<ProcessoMultiplasFilas>> filas = new ArrayList<>();
     private final int[] quantums = new int[]{2, 4, 8};
     private final List<ProcessoMultiplasFilas> finalizados = new ArrayList<>();
-    private int tickAtual = 0;
+    private int quantumAtual = 0;
     @Setter
     private int quantum;
 
@@ -69,15 +69,15 @@ public class MultiplasFilas implements Escalonador {
             }
             if (p == null) break;
             p.setStatus(Status.EXECUTANDO);
-            if (p.getTempoInicio() == -1) p.setTempoInicio(tickAtual);
+            if (p.getTempoInicio() == -1) p.setTempoInicio(quantumAtual);
             int quantum = quantums[nivel];
             int tempoExecutar = Math.min(quantum, p.getTempoRestante());
-            System.out.println("[MF|tick=" + tickAtual + "] Executando " + p.getNome() +
+            System.out.println("[MF|quantum=" + quantumAtual + "] Executando " + p.getNome() +
                     " (fila=" + nivel + ") por " + tempoExecutar +
-                    " ticks (restante=" + p.getTempoRestante() + ")");
+                    " quantums (restante=" + p.getTempoRestante() + ")");
             for (int i = 0; i < tempoExecutar; i++) {
                 p.executarTick();
-                tickAtual++;
+                quantumAtual++;
                 for (int j = 0; j < filas.size(); j++) {
                     for (ProcessoMultiplasFilas q : filas.get(j)) {
                         q.acumularEspera(1);
@@ -86,9 +86,9 @@ public class MultiplasFilas implements Escalonador {
             }
             if (p.terminou()) {
                 p.setStatus(Status.FINALIZADO);
-                p.setTempoFinalizacao(tickAtual);
+                p.setTempoFinalizacao(quantumAtual);
                 finalizados.add(p);
-                System.out.println("[MF] Processo " + p.getNome() + " finalizou no tick " + tickAtual);
+                System.out.println("[MF] Processo " + p.getNome() + " finalizou no quantum " + quantumAtual);
             } else {
                 int novaFila = Math.min(2, nivel + 1);
                 p.setFilaAtual(novaFila);

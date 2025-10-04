@@ -93,7 +93,7 @@ public class SistemaCLI {
             int tp = Integer.parseInt(sc.nextLine());
             Tipo tipo = (tp == 2) ? Tipo.IO_BOUND : Tipo.CPU_BOUND;
 
-            System.out.print("Tempo total de CPU (em ticks): ");
+            System.out.print("Tempo total de CPU (em ms): ");
             int t = Integer.parseInt(sc.nextLine());
 
             chegadaCounter++;
