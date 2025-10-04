@@ -1,6 +1,6 @@
 package br.com.so.model;
 
-public enum EnumStatusProcesso {
+public enum EnumStatus {
     criado("Criado"),
     pronto("Pronto"),
     executando("Em execução"),
@@ -9,7 +9,7 @@ public enum EnumStatusProcesso {
 
     private final String nome;
 
-    EnumStatusProcesso(String nome) {
+    EnumStatus(String nome) {
         this.nome = nome;
     }
 

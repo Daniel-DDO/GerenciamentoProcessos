@@ -2,8 +2,6 @@ module br.com.so.gerenciamentoprocessos {
     requires javafx.controls;
     requires javafx.fxml;
     requires static lombok;
+    requires java.security.jgss;
 
-
-    opens br.com.so.gerenciamentoprocessos to javafx.fxml;
-    exports br.com.so.gerenciamentoprocessos;
 }
